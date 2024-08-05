@@ -15,5 +15,3 @@ def checkAuth(uname, pasw):
     else:
         pass
     return mainFlag
-
-print(checkAuth("Glen", "2001"))

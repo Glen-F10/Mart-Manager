@@ -5,15 +5,7 @@
     </head>
     <body>
         <div>
-            <form action="{ url 'home:login'}" method="POST">
-                {% csrf token %}
-                <input name="username" type="text" id="login_uname">
-                <input name="password" type="login_password" id="pass">
-                <input type="submit" id="submit_login_form">
-                {% if value %}
-                    <p id="login_fail_message">The given username or password is wrong</p>
-                {% endif %}
-            </form>
+            <h1 style="background-color: black;color: white;">Hello, User</h1>
         </div>
     </body>
 </html>
