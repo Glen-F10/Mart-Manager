@@ -123,3 +123,12 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+"""
+SESSION_ENGINE = 'django.contrib.sessions.backends.file'
+curr_path = os.path.join(os.path.abspath(__file__))
+reff_path = os.path.join(curr_path, '..', '..', 'SESH/Sessions')
+SESSION_FILE_PATH = os.path.normpath(reff_path)
+SESSION_COOKIE_AGE = 1209600 #takes as second = 2 weeks
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False 
+"""
