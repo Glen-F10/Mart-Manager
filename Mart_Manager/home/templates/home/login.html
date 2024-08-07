@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Login</title>
+        <title>Mart-Manager|Login</title>
     </head>
     <body>
         <div>
             <form action="{% url 'login' %}" method="POST">
                 {% csrf_token %}
-                <input name="uname" type="text" id="login_uname" required>
-                <input name="password" type="login_password" id="pass" required>
-                <input type="submit" id="submit_login_form">
+                <label>Username</label>
+                <input name="uname" type="text" id="login_uname" placeholder="Username" required>
+                <label>Password</label>
+                <input name="password" type="password" id="login_pass" required>
+                <input type="submit" id="login_submit" value="Login">
                 {% if value %}
                     <p id="login_fail_message">The given username or password is wrong</p>
                 {% endif %}

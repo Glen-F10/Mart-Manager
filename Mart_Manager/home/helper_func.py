@@ -6,3 +6,5 @@ def checkAuth(uname, pasw):
         return True, err
     else:
         return False, err
+    
+print("HELPER_FUNC.PY:: Running......")
