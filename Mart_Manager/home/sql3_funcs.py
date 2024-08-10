@@ -2,6 +2,7 @@ import sqlite3
 import os
 import cryptography
 import cryptography.fernet 
+import re
 
 def nameDB(name: str):
     """
@@ -71,6 +72,18 @@ def retLastID(tablename: str)-> (int|bool):
     except Exception as e:
         print('EXCEPTION OCCURED:in function retLastID():->',e)
         return False
+    
+def cleanData(value:str|int, option:int=0) -> bool:
+    try:
+        if option == 1:
+            include = r'[^0-9a-zA-Z_]'
+            returnValue = re.sub(include, '', value)
+            return returnValue
+        else:
+            return False
+    except Exception as e:
+        print('Exception Occured in function cleanData():->', e)
+        return False
 
 def encrypt_user(name: str, passwd: str):
     """
@@ -97,29 +110,34 @@ def decrypt_user(name, passwd, key):
 
 def retrieveUserLogin(uname: str, upasswd: str):
     try:
-        flag = 0
-        con, cur = connect(nameDB('userLogins.db'))
-        queryRet = """SELECT u.id, u.uname, u.passwd, k.key
-                      FROM user u
-                      JOIN key k ON u.id = k.id"""
-        cur.execute(queryRet)
-        values = cur.fetchall()
-        con.close()
-        for value in values:
-            dname, dpasswd = decrypt_user(value[1], value[2], value[3])
-            if dname == uname and dpasswd == upasswd:
-                print(dname, dpasswd)
-                flag = 1
-                break
+        if cleanData(uname, 1) is True and cleanData(upasswd, 1) is True:
+            flag = 0
+            con, cur = connect(nameDB('userLogins.db'))
+            queryRet = """SELECT u.id, u.uname, u.passwd, k.key
+                        FROM user u
+                        JOIN key k ON u.id = k.id"""
+            cur.execute(queryRet)
+            values = cur.fetchall()
+            con.close()
+            for value in values:
+                dname, dpasswd = decrypt_user(value[1], value[2], value[3])
+                if dname == uname and dpasswd == upasswd:
+                    print(dname, dpasswd)
+                    flag = 1
+                    break
+                else:
+                    pass
+            if flag == 1:
+                print("NOTE : in function retrieveUserLogin():-> User Retrieval Successful")
+                err = None
+                return True, err
             else:
-                pass
-        if flag == 1:
-            print("NOTE : in function retrieveUserLogin():-> User Retrieval Successful")
-            err = None
-            return True, err
+                print("NOTE : in function retrieveUserLogin():-> User Retrieval Unsuccessful, REASON::USER NOT FOUND")
+                err =  "User Not Found"
+                return False, err
         else:
-            print("NOTE : in function retrieveUserLogin():-> User Retrieval Unsuccessful, REASON::USER NOT FOUND")
-            err =  "User Not Found"
+            print("NOTE : The User provided Login did not Pass Through clean data validation Usergiven Data uname:",uname," password:",upasswd)
+            err = None
             return False, err
     except sqlite3.Error as e:
         print("ERROR OCCURED in function retrieveUserLogin():->", e)
@@ -196,6 +214,25 @@ def deleteUser(uname: str):
         print("ERROR OCCURED: in function inserUser():->", e)
         return False
 
+def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function implementation
+    try:
+        if option == 1:
+            flag = 0
+            user_id = None
+            query = """SELECT k.key, u.uname, d.UserType, d.UserFName, d.UserLName, d.UserEmail, d.UserMessageID, d.UserScreenType
+                       FROM user u
+                       Join userDetails d ON u.id = d.id
+                       JOIN key k ON u.id = k.id;"""
+            con, cur = connect(nameDB('userLogins.db'))
+            cur.execute(query)
+            rows = cur.fetchall()
+            for row in rows:
+                print(rows)
+    except Exception as e:
+        print('EXCEPTION OCCURED: in function userDetailsOps():->', e)
+        return False
+
+
 
 #con, cur = connect(nameDB('userLogins.db'))
 #query = """CREATE TABLE IF NOT EXISTS user(
@@ -239,9 +276,21 @@ for user in users:
 for key in keys:
     print(key)
 """
+#Test Functions Below this line
+#con, cur = connect(nameDB('userLogins.db'))
+#query = """CREATE TABLE IF NOT EXISTS userDetails(
+#            id INTEGER,
+#            UserType TEXT NOT NULL,
+#            UserFName TEXT NOT NULL,
+#            UserLName TEXT NOT NULL,
+#            UserEmail TEXT NOT NULL,
+#            UserMessageID TEXT NOT NULL,
+#            UserScreenType TEXT NOT NULL,
+#            FOREIGN KEY (id) REFERENCES user(id)
+#            );"""
+#cur.execute(query)
+#con.commit()
 
 #retrieveUserLogin("Glen", "2001")
 #retrieveUserLogin("Gladys", "1965")
 print("SQL3_FUNCS.PY:: Running......")
-
-#Test Functions Below this line

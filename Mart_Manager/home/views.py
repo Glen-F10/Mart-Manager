@@ -12,7 +12,8 @@ def index(request):
 
 def home(request):
     return render(request, 'home/home.html', context={
-        "name": request.session.get('username')
+        "name": request.session.get('username'),
+        "pages": helper_func.allPrograms()
     })
 
 def login(request):
