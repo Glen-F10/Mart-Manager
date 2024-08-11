@@ -11,9 +11,16 @@ def index(request):
         return redirect('login')
 
 def home(request):
+    auth = request.session.get('auth')
     return render(request, 'home/home.html', context={
-        "name": request.session.get('username'),
-        "pages": helper_func.allPrograms()
+        "name": request.session.get('uname'),
+        "pages": helper_func.allPrograms(auth),
+        "fname": request.session.get('fname'),
+        "lname": request.session.get('lname'),
+        "email": request.session.get('email'),
+        "msg_id": request.session.get('msg_id'),
+        "phone": request.session.get('phone'),
+        "mname": request.session.get('mname')
     })
 
 def login(request):
@@ -24,14 +31,13 @@ def login(request):
         pasw = request.POST["password"]
         auth, err = helper_func.checkAuth(name, pasw)
         if auth==True:
-            request.session['username'] = name
+            helper_func.setSession(request, name)
             return redirect('homepage')
         else:
             return render(request, "home/login.html", context={
                 "value":True,
             })
     else:
-        print("running else")
         return render(request, "home/login.html", context={
                 "value":False,
             })
@@ -53,3 +59,15 @@ def logout(request):
 def getSessionInfo(request):#for session data delete at publish
     session_data = request.session.items()
     return HttpResponse(f"<h1>{session_data}</h1>")  
+
+def AdminPage(request):
+    return HttpResponse("<h1>Admin</h1>")
+
+def ShopPage(request):
+    return HttpResponse("<h1>Shop</h1>")
+
+def ShopManagerPage(request):
+    return HttpResponse("<h1>Shop-Manager</h1>")
+
+def ShopStockPage(request):
+    return HttpResponse("<h1>Mart-Stock</h1>")

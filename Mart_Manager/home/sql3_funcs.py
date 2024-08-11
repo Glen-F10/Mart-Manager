@@ -4,6 +4,21 @@ import cryptography
 import cryptography.fernet 
 import re
 
+def cleanData(value:str|int, option:int=0) -> bool:
+    try:
+        if option == 1:
+            include = r'[0-9a-zA-Z_]'
+            returnValue = re.sub(include, '', value)
+            if len(returnValue) > 0:
+                return False
+            else:
+                return True
+        else:
+            return False
+    except Exception as e:
+        print('Exception Occured in function cleanData():->', e)
+        return False
+
 def nameDB(name: str):
     """
     Will return a path of the sqlite3 db which is stored outside the app folder but is stored in main folder.
@@ -73,17 +88,7 @@ def retLastID(tablename: str)-> (int|bool):
         print('EXCEPTION OCCURED:in function retLastID():->',e)
         return False
     
-def cleanData(value:str|int, option:int=0) -> bool:
-    try:
-        if option == 1:
-            include = r'[^0-9a-zA-Z_]'
-            returnValue = re.sub(include, '', value)
-            return returnValue
-        else:
-            return False
-    except Exception as e:
-        print('Exception Occured in function cleanData():->', e)
-        return False
+
 
 def encrypt_user(name: str, passwd: str):
     """
@@ -122,7 +127,6 @@ def retrieveUserLogin(uname: str, upasswd: str):
             for value in values:
                 dname, dpasswd = decrypt_user(value[1], value[2], value[3])
                 if dname == uname and dpasswd == upasswd:
-                    print(dname, dpasswd)
                     flag = 1
                     break
                 else:
@@ -218,16 +222,30 @@ def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function impl
     try:
         if option == 1:
             flag = 0
-            user_id = None
-            query = """SELECT k.key, u.uname, d.UserType, d.UserFName, d.UserLName, d.UserEmail, d.UserMessageID, d.UserScreenType
+            returnUserDetails = []
+            query = """SELECT k.key, u.id, u.uname, u.passwd, d.UserType, d.UserFName, d.UserMName, d.UserLName, d.UserEmail, d.UserPhone,  d.UserMessageID, d.UserScreenType
                        FROM user u
                        Join userDetails d ON u.id = d.id
                        JOIN key k ON u.id = k.id;"""
             con, cur = connect(nameDB('userLogins.db'))
             cur.execute(query)
             rows = cur.fetchall()
+            con.close()
             for row in rows:
-                print(rows)
+                tocheck, toignore = decrypt_user(row[2], row[3], row[0])
+                del toignore
+                if tocheck == uname:
+                    flag = 1
+                    returnUserDetails.append(tocheck)
+                    for i in range(4,len(row)):
+                        returnUserDetails.append(row[i])
+                    break
+                else:
+                    pass
+            if flag == 1:
+                return returnUserDetails
+            else:
+                return False
     except Exception as e:
         print('EXCEPTION OCCURED: in function userDetailsOps():->', e)
         return False
@@ -247,14 +265,6 @@ def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function impl
 #table 'key' stores encryption keys
 
 #s = cur.execute("select name from sqlite_master where type='table';")
-
-"""
-con, cur = connect(nameDB('userLogins.db'))
-s = cur.execute("select * from user;")
-v = s.fetchall()
-print(v)
-"""
-
 
 #con, cur = connect(nameDB('userLogins.db'))
 #query = """CREATE TABLE IF NOT EXISTS key(
@@ -276,14 +286,16 @@ for user in users:
 for key in keys:
     print(key)
 """
-#Test Functions Below this line
+
 #con, cur = connect(nameDB('userLogins.db'))
 #query = """CREATE TABLE IF NOT EXISTS userDetails(
 #            id INTEGER,
 #            UserType TEXT NOT NULL,
 #            UserFName TEXT NOT NULL,
+#            UserMName TEXT,
 #            UserLName TEXT NOT NULL,
-#            UserEmail TEXT NOT NULL,
+#            UserEmail TEXT,
+#            UserPhone TEXT,
 #            UserMessageID TEXT NOT NULL,
 #            UserScreenType TEXT NOT NULL,
 #            FOREIGN KEY (id) REFERENCES user(id)
@@ -291,6 +303,36 @@ for key in keys:
 #cur.execute(query)
 #con.commit()
 
-#retrieveUserLogin("Glen", "2001")
-#retrieveUserLogin("Gladys", "1965")
-print("SQL3_FUNCS.PY:: Running......")
+#print(userDetailsOps('Glen', 1))
+
+#def insertIntoUserDetails_test():
+#    values = (2, "Admin", "Glen", '', "Furtado", "glenfurtado1010@gmail.com", '8368372657', "1010", "Dark")
+#    query = "INSERT INTO userDetails VALUES (?,?,?,?,?,?,?,?,?);"
+#    con, cur = connect(nameDB('userLogins.db'))
+#    cur.execute(query,values)
+#    con.commit()
+
+"""
+con, cur = connect(nameDB('userLogins.db'))
+cur.execute("Select * from user")
+rows = cur.fetchall()
+cur.execute("Select * from key")
+rows2 = cur.fetchall()
+for row in rows:
+    for row2 in rows2:
+        if row[0] == row2[0]:
+            print(decrypt_user(row[1], row[2], row2[1]))
+"""
+"""
+con, cur = connect(nameDB('userLogins.db'))
+cur.execute("Select * from userDetails;")
+rows = cur.fetchall()
+for row in rows:
+    print(row)
+"""
+#retrieveUserLogin("Glen", "2001")2 = id
+#retrieveUserLogin("Gladys", "1965")3 = id
+#print(userDetailsOps('Glen', 1))
+print("SQL3_FUNCS.PY:: Running......####")
+
+#Test Functions Below this line
