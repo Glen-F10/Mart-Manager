@@ -1,20 +1,23 @@
 from . import sql3_funcs
+import os
 
 def allPrograms(user:str) -> list:
+    """
+    Retrurn Pattern is a list and elements are.
+
+    [access, adminpage, shop, Inventory, site-Manager]
+    """
     if user == "Admin":
-        programsList = [['Admin', 'Admin'],
-                        ['Mart_Cust', 'Shop'],
-                        ['Mart_Manager', 'Shop-Manager'],
-                        ['Logistic', 'Mart-Stock']]
+        programsList = ['Admin', '', '', '', '']
     elif user == "Employee-Online":
-        programsList = [['Mart_Cust', 'Shop'],
-                        ['Mart_Manager', 'Shop-Manager']]
+        programsList = ['Employee-Site', 'd-none', '', 'd-none', '']
     elif user == "Employee-offline":
-        programsList = [['Logistic', 'Mart-Stock']]
+        programsList = ['Employee-Logistics', 'd-none', 'd-none', '', 'd-none']
     elif user == "Customer":
-        programsList = [['Mart_Cust', 'Shop']]
+        programsList = ['Customer', 'd-none', '', 'd-none', 'd-none']
     else:
         programsList = []
+    print(programsList)
     return programsList
 
 def checkAuth(uname, pasw):
@@ -25,6 +28,7 @@ def checkAuth(uname, pasw):
         return False, err
     
 def setSession(request, name):
+    print("Setting Session")
     values = sql3_funcs.userDetailsOps(name, 1)
     request.session['uname'] = values[0]
     request.session['auth'] = values[1]
@@ -37,3 +41,11 @@ def setSession(request, name):
     request.session['screen'] = values[8]
     
 print("HELPER_FUNC.PY:: Running......###")
+
+def staticPath():
+    current_dir = os.path.join(os.path.abspath(__file__))   
+    static_dir = os.path.join(current_dir, '..', '..','static')
+    static_actual = (os.path.normpath(os.path.join(static_dir,)))
+    return_static = static_actual.replace('\\', '/')
+    return return_static
+

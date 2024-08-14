@@ -5,26 +5,21 @@ from . import helper_func
 
 # Create your views here.
 def index(request):
-    if request.session.get('username'):
+    if request.session.get('uname') is not None:
         return redirect('homepage')
     else:
         return redirect('login')
 
 def home(request):
     auth = request.session.get('auth')
-    return render(request, 'home/home.html', context={
+    return render(request, 'home/test.html', context={
         "name": request.session.get('uname'),
-        "pages": helper_func.allPrograms(auth),
-        "fname": request.session.get('fname'),
-        "lname": request.session.get('lname'),
-        "email": request.session.get('email'),
-        "msg_id": request.session.get('msg_id'),
-        "phone": request.session.get('phone'),
-        "mname": request.session.get('mname')
+        "user": helper_func.allPrograms(auth),
+        "staticPath": helper_func.staticPath(),
     })
 
 def login(request):
-    if request.session.get('username'):
+    if request.session.get('uname'):
         return redirect('homepage')
     elif request.method == 'POST':
         name = request.POST["uname"]
