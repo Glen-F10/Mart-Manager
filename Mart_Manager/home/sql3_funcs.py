@@ -223,7 +223,7 @@ def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function impl
         if option == 1:
             flag = 0
             returnUserDetails = []
-            query = """SELECT k.key, u.id, u.uname, u.passwd, d.UserType, d.UserFName, d.UserMName, d.UserLName, d.UserEmail, d.UserPhone,  d.UserMessageID, d.UserScreenType
+            query = """SELECT k.key, u.id, u.uname, u.passwd, d.UserType, d.UserFName, d.UserMName, d.UserLName, d.UserEmail, d.UserPhone,  d.UserMessageID, d.UserEmailID, d.LastPageURL
                        FROM user u
                        Join userDetails d ON u.id = d.id
                        JOIN key k ON u.id = k.id;"""
@@ -236,6 +236,7 @@ def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function impl
                 del toignore
                 if tocheck == uname:
                     flag = 1
+                    returnUserDetails.append(row[1])
                     returnUserDetails.append(tocheck)
                     for i in range(4,len(row)):
                         returnUserDetails.append(row[i])
@@ -287,6 +288,7 @@ for key in keys:
     print(key)
 """
 
+#Test Functions Below this line
 #con, cur = connect(nameDB('userLogins.db'))
 #query = """CREATE TABLE IF NOT EXISTS userDetails(
 #            id INTEGER,
@@ -297,7 +299,8 @@ for key in keys:
 #            UserEmail TEXT,
 #            UserPhone TEXT,
 #            UserMessageID TEXT NOT NULL,
-#            UserScreenType TEXT NOT NULL,
+#            UserEmailID TEXT NOT NULL,
+#            LastPageURL TEXT NOT NULL,
 #            FOREIGN KEY (id) REFERENCES user(id)
 #            );"""
 #cur.execute(query)
@@ -305,13 +308,14 @@ for key in keys:
 
 #print(userDetailsOps('Glen', 1))
 
-#def insertIntoUserDetails_test():
-#    values = (2, "Admin", "Glen", '', "Furtado", "glenfurtado1010@gmail.com", '8368372657', "1010", "Dark")
-#    query = "INSERT INTO userDetails VALUES (?,?,?,?,?,?,?,?,?);"
-#    con, cur = connect(nameDB('userLogins.db'))
-#    cur.execute(query,values)
-#    con.commit()
-
+"""
+def insertIntoUserDetails_test():
+    values = (2, "Employee-Online", "Gladys", "", "Furtado", "Julianagladysfurtado@gmail.com", '9945936587', "1011", "gladys@Mart-Manager", "Home")
+    query = "INSERT INTO userDetails VALUES (?,?,?,?,?,?,?,?,?,?);"
+    con, cur = connect(nameDB('userLogins.db'))
+    cur.execute(query,values)
+    con.commit()
+"""
 """
 con, cur = connect(nameDB('userLogins.db'))
 cur.execute("Select * from user")

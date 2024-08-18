@@ -17,7 +17,6 @@ def allPrograms(user:str) -> list:
         programsList = ['Customer', 'd-none', '', 'd-none', 'd-none']
     else:
         programsList = []
-    print(programsList)
     return programsList
 
 def checkAuth(uname, pasw):
@@ -28,18 +27,22 @@ def checkAuth(uname, pasw):
         return False, err
     
 def setSession(request, name):
-    print("Setting Session")
     values = sql3_funcs.userDetailsOps(name, 1)
-    request.session['uname'] = values[0]
-    request.session['auth'] = values[1]
-    request.session['fname'] = values[2]
-    request.session['mname'] = values[3]
-    request.session['lname'] = values[4]
-    request.session['email'] = values[5]
-    request.session['phone'] = values[6]
-    request.session['msg_id'] = values[7] 
-    request.session['screen'] = values[8]
+    print(values)
+    request.session['uid'] = values[0]
+    request.session['uname'] = values[1]
+    request.session['auth'] = values[2]
+    request.session['fname'] = values[3]
+    request.session['mname'] = values[4]
+    request.session['lname'] = values[5]
+    request.session['email'] = values[6]
+    request.session['phone'] = values[7]
+    request.session['msg_id'] = values[8]
+    request.session['eml_id'] = values[9]
+    request.session['last_page_url'] = values[10]
+
     
+
 print("HELPER_FUNC.PY:: Running......###")
 
 def staticPath():
@@ -48,4 +51,5 @@ def staticPath():
     static_actual = (os.path.normpath(os.path.join(static_dir,)))
     return_static = static_actual.replace('\\', '/')
     return return_static
+
 

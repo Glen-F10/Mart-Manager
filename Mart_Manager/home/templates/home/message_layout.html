@@ -1,0 +1,68 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home| message</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <style>
+        .background-image {
+            background-image: url("{% static 'bg-home/bg-light-blue.jpg' %}");
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            height: 100vh;
+        }
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+            z-index: 2; /* Overlay above the background image */
+        }
+        #programs{
+          transition: transform 0.3s ease;
+        }
+        #programs:hover{
+          transform: scale(1.5);
+        }
+    </style>
+    <div class="background-image d-flex justify-content-center align-items-center fixed-top">
+    <nav class="navbar fixed-top navbar-light bg-transparent">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><p class="fw-bold fs-3 text-light">Hello, {{name}}</p></a>
+          <a data-bs-toggle="tooltip" data-bs-title="Open side menu">
+          <button class="btn btn-transparent" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sidemenu">
+            <!--<img class="icon img-fluid">-->
+            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF"><path d="M120-240v-66.67h520V-240H120Zm673.33-48L600.67-480.67l192-192L840-625.33 695.33-480.67l145.34 145.34L793.33-288ZM120-448v-66.67h400V-448H120Zm0-205.33V-720h520v66.67H120Z"/></svg>
+            </button>
+          </a>
+        </div>
+      </nav>
+      <div class="offcanvas offcanvas-end rounded" tabindex="-1" id="sideMenu" data-bs-scroll="true" aria-labelledby="sideMenuRight">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="sideMenuRight">User Operations</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          ...
+        </div>
+    </div>
+    <div class="container-lg justify-content-center">
+        <h1 class="text-center text-{{ messageColor }} fw-bolder">{{ messageHead }}</h1>
+        <h3 class="text-center text-light fw-bolder">{{ messageBody }}</h3>
+    </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        //for tooltip activation
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+  </body>
+</html>

@@ -25,7 +25,7 @@ def login(request):
         name = request.POST["uname"]
         pasw = request.POST["password"]
         auth, err = helper_func.checkAuth(name, pasw)
-        if auth==True:
+        if auth:
             helper_func.setSession(request, name)
             return redirect('homepage')
         else:
@@ -53,16 +53,53 @@ def logout(request):
 
 def getSessionInfo(request):#for session data delete at publish
     session_data = request.session.items()
-    return HttpResponse(f"<h1>{session_data}</h1>")  
+    return HttpResponse(f"<h1>{session_data}</h1>")
 
-def AdminPage(request):
-    return HttpResponse("<h1>Admin</h1>")
+def chatRedirect(request):
+    if request.session.get('uname') is not None:
+        return redirect('chat-index')  #redirecting to mart chat app
 
-def ShopPage(request):
-    return HttpResponse("<h1>Shop</h1>")
+def blocking(request):
+    access = request.session.get('auth')
+    messageHead = 'Warning : Access Denied'
+    messageBody = f'You are not authorized to access this page, your authorization is of a {access}. This action is reproted by default please contact your administrator if error'
+    return render(request, "home/message_layout.html", context={
+        'messageColor': 'danger',
+        'messageHead':messageHead,
+        'messageBody':messageBody,
+        'staticPath': helper_func.staticPath(),
+        'name': request.session.get('uname'),
+    })
 
-def ShopManagerPage(request):
-    return HttpResponse("<h1>Shop-Manager</h1>")
+def exception(request):
+    messageHead = 'Oops!! Something went wrong'
+    messageBody = 'Please try again later, Note: This error is reproted by default please contact your administrator if error persists, Thank you' 
+    return render(request, "home/message_layout.html", context={
+        'messageColor': 'light',
+        'messageHead':messageHead,
+        'messageBody':messageBody,
+        'staticPath': helper_func.staticPath(),
+        'name': request.session.get('uname'),
+    })
 
-def ShopStockPage(request):
-    return HttpResponse("<h1>Mart-Stock</h1>")
+def pageNotFound(request):
+    messageHead = 'Oops!! Page Not Found ERROR: 404'
+    messageBody = 'Please check the link given, Note: This error is reproted by default please contact your administrator if error persists, Thank you' 
+    return render(request, "home/message_layout.html", context={
+        'messageColor': 'warning',
+        'messageHead':messageHead,
+        'messageBody':messageBody,
+        'staticPath': helper_func.staticPath(),
+        'name': request.session.get('uname'),
+    })
+
+def sessionExpired(request):
+    messageHead = 'Your Session has expired!'
+    messageBody = 'Please login again, Note: This error is reproted by default please contact your administrator if error persists, Thank you' 
+    return render(request, "home/message_layout.html", context={
+        'messageColor': 'warning',
+        'messageHead':messageHead,
+        'messageBody':messageBody,
+        'staticPath': helper_func.staticPath(),
+        'name': request.session.get('uname'),
+    })
