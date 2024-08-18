@@ -1,28 +1,102 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Mart-Manager</title>
-    </head>
-    <body style="background-color: black;color: white;">
-        <div>
-            <h1>Hello, {{ name }}</h1>
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home| {{ user.0 }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <style>
+        .background-image {
+            background-image: url("{% static 'bg-home/bg-light-blue.jpg' %}");
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat;
+            height: 100vh;
+        }
+        .background-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+            z-index: 2; /* Overlay above the background image */
+        }
+        #programs{
+          transition: transform 0.3s ease;
+        }
+        #programs:hover{
+          transform: scale(1.5);
+        }
+    </style>
+    <div class="background-image d-flex justify-content-center align-items-center fixed-top">
+    <nav class="navbar fixed-top navbar-light bg-transparent">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#"><p class="fw-bold fs-3 text-light">Hello, {{name}}</p></a>
+          <a data-bs-toggle="tooltip" data-bs-title="Open side menu">
+          <button class="btn btn-transparent" type="button" data-bs-toggle="offcanvas" data-bs-target="#sideMenu" aria-controls="sidemenu">
+            <!--<img class="icon img-fluid">-->
+            <svg xmlns="http://www.w3.org/2000/svg" height="40px" viewBox="0 -960 960 960" width="40px" fill="#FFFFFF"><path d="M120-240v-66.67h520V-240H120Zm673.33-48L600.67-480.67l192-192L840-625.33 695.33-480.67l145.34 145.34L793.33-288ZM120-448v-66.67h400V-448H120Zm0-205.33V-720h520v66.67H120Z"/></svg>
+            </button>
+          </a>
         </div>
-        <div>
-            <!--Testing!! clear later-->
-            <h1>First Name {{fname}}</h1>
-            <h1>Middle Name {{mname}}</h1>
-            <h1>Last Name {{lname}}</h1>
-            <h1>Phone no {{phone}}</h1>
-            <h1>Email {{email}}</h1>
-            <h1>MessageID {{msg_id}}</h1>
+      </nav>
+      <div class="offcanvas offcanvas-end rounded" tabindex="-1" id="sideMenu" data-bs-scroll="true" aria-labelledby="sideMenuRight">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title fs-4 fw-bolder" id="sideMenuRight">{{ name }}</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div>
-            {% for page in pages %}
-            <a href="{% url page.1 %}"><h3>{{ page.0 }}</h3></a>
-            {% endfor %}
+        <span class="border-top border-dark col-12 p-0"></span>
+        <div class="offcanvas-body">
+            <a class="text-decoration-none" href="#"><p class="text-dark fw-bold fs-5">Profile</p></a>
+            <a class="text-decoration-none" href="{% url 'logout' %}"><p class="text-dark fw-bold fs-5">Logout</p></a>
         </div>
-        <div>
-            <a href="{% url 'logout'%}"><button>Logout</button></a>
+      </div>
+      <div class="container-lg justify-content-center">
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-3 d-flex flex-column align-items-center justify-content-center text-center mb-4 {{user.1}}">
+              <div class="d-flex flex-column align-items-center" id="programs" data-bs-toggle="tooltip" data-bs-title="Administrator Access">
+                <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M480-450q-58 0-97.5-39.5T343-587q0-58 39.5-97.5T480-724q58 0 97.5 39.5T617-587q0 58-39.5 97.5T480-450Zm0-60q34 0 55.5-21.5T557-587q0-34-21.5-55.5T480-664q-34 0-55.5 21.5T403-587q0 34 21.5 55.5T480-510Zm0 429q-140-35-230-162.5T160-523v-238l320-120 320 120v238q0 152-90 279.5T480-81Zm0-399Zm0-337-260 98v196q0 63 17.5 120.5T287-296q46-25 93.5-37.5T480-346q52 0 99.5 12.5T673-296q32-49 49.5-106.5T740-523v-196l-260-98Zm0 531q-39 0-78 10t-77 30q32 35 71 61.5t84 41.5q45-15 84-41.5t71-61.5q-38-20-77-30t-78-10Z"/></svg> 
+                <h3 class="text-light fw-bold">Admin</h3> 
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3 d-flex flex-column align-items-center justify-content-center text-center mb-4 {{user.2}}">
+              <div class="d-flex flex-column align-items-center" id="programs" data-bs-toggle="tooltip" data-bs-title="Shop for Customers">
+                <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M286.79-81Q257-81 236-102.21t-21-51Q215-183 236.21-204t51-21Q317-225 338-203.79t21 51Q359-123 337.79-102t-51 21Zm400 0Q657-81 636-102.21t-21-51Q615-183 636.21-204t51-21Q717-225 738-203.79t21 51Q759-123 737.79-102t-51 21ZM235-741l110 228h288l125-228H235Zm-30-60h589.07q22.97 0 34.95 21 11.98 21-.02 42L694-495q-11 19-28.56 30.5T627-453H324l-56 104h491v60H277q-42 0-60.5-28t.5-63l64-118-152-322H51v-60h117l37 79Zm140 288h288-288Z"/></svg>
+                <h3 class="text-light fw-bold">Shop</h3>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3 d-flex flex-column align-items-center justify-content-center text-center mb-4 {{user.3}}">
+              <div class="d-flex flex-column align-items-center" id="programs" data-bs-toggle="tooltip" data-bs-title="Check Stock">
+                <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M620-159 460-319l43-43 117 117 239-239 43 43-282 282Zm220-414h-60v-207h-60v90H240v-90h-60v600h251v60H180q-26 0-43-17t-17-43v-600q0-26 17-43t43-17h202q7-35 34.5-57.5T480-920q36 0 63.5 22.5T578-840h202q26 0 43 17t17 43v207ZM480-780q17 0 28.5-11.5T520-820q0-17-11.5-28.5T480-860q-17 0-28.5 11.5T440-820q0 17 11.5 28.5T480-780Z"/></svg>
+                <h3 class="text-light fw-bold">Inventory</h3>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3 d-flex flex-column align-items-center justify-content-center text-center mb-4 {{user.4}}">
+              <div class="d-flex flex-column align-items-center" id="programs" data-bs-toggle="tooltip" data-bs-title="Used for Site Management">
+                <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#FFFFFF"><path d="M42-120v-92q0-34 16-56.5t45-36.5q54-26 115.5-43T358-365q78 0 139.5 17T613-305q29 14 45 36.5t16 56.5v92H42Zm60-60h512v-32q0-15-8.5-24.5T585-251q-43-19-96-36.5T358-305q-78 0-131 17.5T131-251q-12 5-20.5 14.5T102-212v32Zm256-245q-66 0-108-43t-42-107h-10q-8 0-14-6t-6-14q0-8 6-14t14-6h10q0-40 20-72t52-52v39q0 6 4.5 10.5T295-685q7 0 11-4.5t4-10.5v-52q8-2 22-3.5t27-1.5q13 0 27 1.5t22 3.5v52q0 6 4 10.5t11 4.5q6 0 10.5-4.5T438-700v-39q32 20 51 52t19 72h10q8 0 14 6t6 14q0 8-6 14t-14 6h-10q0 64-42 107t-108 43Zm0-60q42 0 66-25t24-65H268q0 40 24 65t66 25Zm302 124-2-29q-7-4-14.5-9T630-409l-26 14-22-32 26-19q-2-4-2-7.5v-15q0-3.5 2-7.5l-26-19 22-32 26 14 14-10q7-5 14-9l2-29h40l2 29q7 4 14 9l14 10 26-14 22 32-26 19q2 4 2 7.5v15q0 3.5-2 7.5l26 19-22 32-26-14q-6 5-13.5 10t-14.5 9l-2 29h-40Zm20-62q16 0 27-11t11-27q0-16-11-27t-27-11q-16 0-27 11t-11 27q0 16 11 27t27 11Zm88-155-9-35q-10-4-20.5-11T721-639l-44 16-20-35 35-28q-2-5-3.5-11t-1.5-12q0-6 1.5-12t3.5-11l-35-28 20-35 44 16q7-8 17.5-15.5T759-805l9-35h38l9 35q10 3 20.5 10.5T853-779l44-16 20 35-35 28q2 5 3.5 11t1.5 12q0 6-1.5 12t-3.5 11l35 28-20 35-44-16q-7 8-17.5 15T815-613l-9 35h-38Zm19-73q25 0 41.5-16.5T845-709q0-25-16.5-41.5T787-767q-25 0-41.5 16.5T729-709q0 25 16.5 41.5T787-651ZM358-180Z"/></svg>
+                <h3 class="text-light fw-bold">Site Manager</h3>
+              </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3 d-flex flex-column align-items-center justify-content-center text-center mb-4">
+              <a class="text-decoration-none" href="{% url 'redirect-chat' %}">
+              <div class="d-flex flex-column align-items-center" id="programs" data-bs-toggle="tooltip" data-bs-title="Chat with other employees">
+                <svg xmlns="http://www.w3.org/2000/svg" height="48px" viewBox="0 -960 960 960" width="48px" fill="#F3F3F3"><path d="M281-240q-14 0-27.5-14T240-282v-98h500v-340h100q14 0 27 14t13 29v596L721-240H281ZM80-280v-558q0-14 13-28t27-14h519q15 0 28 13.5t13 28.5v356q0 14-13 28t-28 14H240L80-280Zm540-220v-320H140v320h480Zm-480 0v-320 320Z"/></svg>
+                <h3 class="text-light fw-bold">Mart Chat</h3>
+              </div>
+              </a>
+            </div>
         </div>
-    </body>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        //for tooltip activation
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    </script>
+  </body>
 </html>

@@ -11,53 +11,71 @@ def index(request):
         return redirect('login')
 
 def home(request):
-    auth = request.session.get('auth')
-    return render(request, 'home/test.html', context={
-        "name": request.session.get('uname'),
-        "user": helper_func.allPrograms(auth),
-        "staticPath": helper_func.staticPath(),
-    })
+    try:
+        if request.session.get('uname') is None:
+            return redirect('sessionExpired')
+        else:
+            auth = request.session.get('auth')
+            request.session['last_page_url'] = 'homepage'
+            return render(request, 'home/home.html', context={
+                "name": request.session.get('uname'),
+                "user": helper_func.allPrograms(auth),
+            })
+    except Exception as e:
+        print("EXCEPTION OCCURED in function home():->",e)
+        return redirect('exception')
 
 def login(request):
-    if request.session.get('uname'):
-        return redirect('homepage')
-    elif request.method == 'POST':
-        name = request.POST["uname"]
-        pasw = request.POST["password"]
-        auth, err = helper_func.checkAuth(name, pasw)
-        if auth:
-            helper_func.setSession(request, name)
+    try:
+        if request.session.get('uname'):
             return redirect('homepage')
-        else:
+        elif request.method == 'POST':
+            name = request.POST["uname"]
+            pasw = request.POST["password"]
+            auth, err = helper_func.checkAuth(name, pasw)
+            if auth:
+                helper_func.setSession(request, name)
+                return redirect('homepage')
+            else:
+                return render(request, "home/login.html", context={
+                    "formtype":"errorlogin",
+                    "error":"Invalid Username or Password",
+                    })
+        elif request.session.get('uname') is None:
             return render(request, "home/login.html", context={
-                "value":True,
-            })
-    else:
-        return render(request, "home/login.html", context={
-                "value":False,
-            })
+                "formtype":"login",
+                })
+        else:
+            return redirect('blocked')
+            
+    except Exception as e:
+        print("EXCEPTION OCCURED in function login():->",e)
+        return redirect('exception')
     
 def logout(request):
     try:
-        auth.logout(request)
-        message1 = "Logout Successful"
-        return render(request, "home/logout.html", context={
-            'Message':message1
-        })
+        if request.session.get('uname') is None:
+            return redirect('sessionExpired')
+        else:
+            auth.logout(request)
+            messageHead = 'You have been Logged out'
+            messageBody = 'Please login again to use the application, If error please contact your administrator' 
+            return render(request, "home/message_layout.html", context={
+                'messageColor': 'warning',
+                'messageHead':messageHead,
+                'messageBody':messageBody,
+                'goback_link': 'login',
+                'goback_value': 'Login Again',
+                'staticPath': helper_func.staticPath(),
+                'name': request.session.get('uname'),
+            })
     except Exception as e:
-        message2 = "Logout Unsuccessful"
         print("ERROR OCCURED in function logout() in views.py file :->", e)
-        return render(request, "home/logout.html", context={
-            "Message":message2
-        })
+        return redirect('exception')
 
 def getSessionInfo(request):#for session data delete at publish
     session_data = request.session.items()
     return HttpResponse(f"<h1>{session_data}</h1>")
-
-def chatRedirect(request):
-    if request.session.get('uname') is not None:
-        return redirect('chat-index')  #redirecting to mart chat app
 
 def blocking(request):
     access = request.session.get('auth')
@@ -67,7 +85,8 @@ def blocking(request):
         'messageColor': 'danger',
         'messageHead':messageHead,
         'messageBody':messageBody,
-        'staticPath': helper_func.staticPath(),
+        'goback_link': 'login',
+        'goback_value': 'Login Again',
         'name': request.session.get('uname'),
     })
 
@@ -78,6 +97,8 @@ def exception(request):
         'messageColor': 'light',
         'messageHead':messageHead,
         'messageBody':messageBody,
+        'goback_link': request.session.get('last_page_url'),
+        'goback_value': 'Go Back',
         'staticPath': helper_func.staticPath(),
         'name': request.session.get('uname'),
     })
@@ -89,6 +110,8 @@ def pageNotFound(request):
         'messageColor': 'warning',
         'messageHead':messageHead,
         'messageBody':messageBody,
+        'goback_link': request.session.get('last_page_url'),
+        'goback_value': 'Go Back',
         'staticPath': helper_func.staticPath(),
         'name': request.session.get('uname'),
     })
@@ -100,6 +123,12 @@ def sessionExpired(request):
         'messageColor': 'warning',
         'messageHead':messageHead,
         'messageBody':messageBody,
+        'goback_link': 'login',
+        'goback_value': 'Login Again',
         'staticPath': helper_func.staticPath(),
         'name': request.session.get('uname'),
     })
+
+def chatRedirect(request):
+    if request.session.get('uname') is not None:
+        return redirect('chat-index')  #redirecting to mart chat app

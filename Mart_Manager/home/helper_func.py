@@ -28,7 +28,6 @@ def checkAuth(uname, pasw):
     
 def setSession(request, name):
     values = sql3_funcs.userDetailsOps(name, 1)
-    print(values)
     request.session['uid'] = values[0]
     request.session['uname'] = values[1]
     request.session['auth'] = values[2]
