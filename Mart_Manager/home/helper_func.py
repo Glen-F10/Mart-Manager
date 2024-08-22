@@ -1,3 +1,4 @@
+print("Helper Funcs Loading...")
 from . import sql3_funcs
 import os
 
@@ -42,7 +43,7 @@ def setSession(request, name):
 
     
 
-print("HELPER_FUNC.PY:: Running......###")
+print("Helper Funcs Loaded")
 
 def staticPath():
     current_dir = os.path.join(os.path.abspath(__file__))   

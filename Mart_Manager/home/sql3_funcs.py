@@ -1,8 +1,12 @@
+print("SQL3_FUNCS Loading...")
 import sqlite3
 import os
 import cryptography
 import cryptography.fernet 
 import re
+from datetime import date
+
+sqlite3.register_adapter(date, lambda d: d.isoformat())#to convert date to iso format (SQL3 compatible)
 
 def cleanData(value:str|int, option:int=0) -> bool:
     try:
@@ -251,7 +255,15 @@ def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function impl
         print('EXCEPTION OCCURED: in function userDetailsOps():->', e)
         return False
 
+print("SQL3_FUNCS Loaded...")
 
+#Test Functions Below this line
+
+
+
+
+
+#Below Code is for testing purposes
 
 #con, cur = connect(nameDB('userLogins.db'))
 #query = """CREATE TABLE IF NOT EXISTS user(
@@ -337,6 +349,3 @@ for row in rows:
 #retrieveUserLogin("Glen", "2001")2 = id
 #retrieveUserLogin("Gladys", "1965")3 = id
 #print(userDetailsOps('Glen', 1))
-print("SQL3_FUNCS.PY:: Running......####")
-
-#Test Functions Below this line
