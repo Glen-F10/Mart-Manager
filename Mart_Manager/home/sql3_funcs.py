@@ -4,6 +4,8 @@ import os
 import cryptography
 import cryptography.fernet 
 import re
+import logfuncs
+#from . import logfuncs
 from datetime import date
 
 sqlite3.register_adapter(date, lambda d: d.isoformat())#to convert date to iso format (SQL3 compatible)
@@ -14,13 +16,34 @@ def cleanData(value:str|int, option:int=0) -> bool:
             include = r'[0-9a-zA-Z_]'
             returnValue = re.sub(include, '', value)
             if len(returnValue) > 0:
+                #---Log start---
+                message = "CLEAN DATA UNSUCCESSFUL in function sql3_funcs.cleanData()"
+                program = "home app"
+                error = f"Invalid Data {value} given"
+                logfuncs.insertlog("NA", "NA", program, message, error, None)
+                #---Log end---
                 return False
             else:
+                #---Log start---
+                message = "CLEAN DATA SUCCESSFUL in function sql3_funcs.cleanData()"
+                program = "home app"
+                logfuncs.insertlog("NA", "NA", program, message, None, None)
+                #---Log end---
                 return True
         else:
+            #---Log start---
+            message = "CLEAN DATA UNSUCCESSFUL in function sql3_funcs.cleanData()"
+            program = "home app"
+            error = f"Invalid option value {option}"
+            logfuncs.insertlog("NA", "NA", program, message, None, None)
+            #---Log end---
             return False
     except Exception as e:
-        print('Exception Occured in function cleanData():->', e)
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.cleanData()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
         return False
 
 def nameDB(name: str):
@@ -55,9 +78,29 @@ def connect(dbName: str):
     Example:
     >>> con, cur =connect(nameDB('dbFileName.db'))
     """
-    con = sqlite3.connect(dbName)
-    cur = con.cursor()
-    return con, cur
+    try:
+        con = sqlite3.connect(dbName)
+        cur = con.cursor()
+        #---Log start---
+        message = "DB CONNECTION SUCCESSFUL in function sql3_funcs.connect()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, None)
+        #---Log end---
+        return con, cur
+    except sqlite3.Error as e:
+        #---Log start---
+        message = "ERROR OCCURED in function sql3_funcs.connect()"
+        program = f"home app/DB connection {dbName}"
+        logfuncs.insertlog("NA", "NA", program, message, e, None)
+        #---Log end---
+        return False
+    except Exception as e:
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.connect()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
+        return False
 
 def retLastID(tablename: str)-> (int|bool):
     """
@@ -80,16 +123,34 @@ def retLastID(tablename: str)-> (int|bool):
         if lastID is None:
             lastID = 1
             con.close()
+            #---Log start---
+            message = "LAST ID RETRIEVED SUCCESSFULLY in function sql3_funcs.retLastID()"
+            program = "home app"
+            logfuncs.insertlog("NA", "NA", program, message, None, None)
+            #---Log end---
             return lastID
         else:
             lastID = lastID + 1
             con.close()
+            #---Log start---
+            message = "LAST ID RETRIEVED SUCCESSFULLY in function sql3_funcs.retLastID()"
+            program = "home app"
+            logfuncs.insertlog("NA", "NA", program, message, None, None)
+            #---Log end---
             return lastID
     except sqlite3.Error as e:
-        print('ERROR OCCURED:in function retLastID():->',e)
+        #---Log start---
+        message = "ERROR OCCURED in function sql3_funcs.retLastID()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, e, None)
+        #---Log end---
         return False
     except Exception as e:
-        print('EXCEPTION OCCURED:in function retLastID():->',e)
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.retLastID()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
         return False
     
 
@@ -105,17 +166,33 @@ def encrypt_user(name: str, passwd: str):
     Example:
     >>> encrypt_user('username','password')
     """
-    key = cryptography.fernet.Fernet.generate_key()
-    cyp = cryptography.fernet.Fernet(key)
-    retName = cyp.encrypt(name.encode())
-    retpasswd = cyp.encrypt(passwd.encode())
-    return retName, retpasswd, key
+    try:
+        key = cryptography.fernet.Fernet.generate_key()
+        cyp = cryptography.fernet.Fernet(key)
+        retName = cyp.encrypt(name.encode())
+        retpasswd = cyp.encrypt(passwd.encode())
+        return retName, retpasswd, key
+    except Exception as e:
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.encrypt_user()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
+        return False
 
 def decrypt_user(name, passwd, key):
-    cyp = cryptography.fernet.Fernet(key)
-    retName = cyp.decrypt(name).decode()
-    retpasswd = cyp.decrypt(passwd).decode()
-    return retName, retpasswd
+    try:
+        cyp = cryptography.fernet.Fernet(key)
+        retName = cyp.decrypt(name).decode()
+        retpasswd = cyp.decrypt(passwd).decode()
+        return retName, retpasswd
+    except Exception as e:
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.decrypt_user()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
+        return False
 
 def retrieveUserLogin(uname: str, upasswd: str):
     try:
@@ -136,25 +213,43 @@ def retrieveUserLogin(uname: str, upasswd: str):
                 else:
                     pass
             if flag == 1:
-                print("NOTE : in function retrieveUserLogin():-> User Retrieval Successful")
+                #---Log start---
+                message = "USER LOGIN Retrieved SUCCESSFULLY in function sql3_funcs.retrieveUserLogin()"
+                program = "home app"
+                logfuncs.insertlog("NA", "NA", program, message, None, None)
+                #---Log end---
                 err = None
-                return True, err
+                return True
             else:
-                print("NOTE : in function retrieveUserLogin():-> User Retrieval Unsuccessful, REASON::USER NOT FOUND")
-                err =  "User Not Found"
-                return False, err
+                #---Log start---
+                message = "USER LOGIN NOT Retrieved SUCCESSFULLY in function sql3_funcs.retrieveUserLogin()"    
+                program = "home app"
+                Error = f"User Not Found {uname} {upasswd}"
+                logfuncs.insertlog("NA", "NA", program, message, Error, None)
+                #---Log end---
+                return False
         else:
-            print("NOTE : The User provided Login did not Pass Through clean data validation Usergiven Data uname:",uname," password:",upasswd)
-            err = None
-            return False, err
+            #---Log start---
+            message = "USER LOGIN NOT Retrieved SUCCESSFULLY in function sql3_funcs.retrieveUserLogin()"
+            program = "home app"
+            Error = f"Invalid Data {uname} {upasswd}, Did not pass validation in sql3_funcs.cleanData()"
+            logfuncs.insertlog("NA", "NA", program, message, Error, None)
+            #---Log end---
+            return False
     except sqlite3.Error as e:
-        print("ERROR OCCURED in function retrieveUserLogin():->", e)
-        err = "ERROR IN Database"
-        return False, err
+        #---Log start---
+        message = "ERROR OCCURED in function sql3_funcs.retrieveUserLogin()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, e, None)
+        #---Log end---
+        return False
     except Exception as e:
-        print("EXCEPTION OCCURED in function retrieveUserLogin():->", e)
-        err = "EXCEPTION OCCURED"
-        return False, err
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.retrieveUserLogin()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, e, None)
+        #---Log end---
+        return False
 
 def insertUser(uname, upasswd):
     try:
@@ -162,7 +257,12 @@ def insertUser(uname, upasswd):
         con, cur = connect(nameDB('userLogins.db'))
         lastID = retLastID('user')
         if lastID is False:
-            print('EXCEPTION OCCURED in function insertUser() While Calling retLastID()')
+            #---Log start---
+            message = "LAST ID NOT RETRIEVED SUCCESSFULLY in function sql3_funcs.insertUser()"
+            program = "home app"
+            error = "LAST ID NOT RETRIEVED SUCCESSFULLY FROM sql3_funcs.retLastID()"
+            logfuncs.insertlog("NA", "NA", program, message, error, None)
+            #---Log end---
             return False
         else:
             values1 = (lastID, name, passwd,)
@@ -171,12 +271,25 @@ def insertUser(uname, upasswd):
             query2 = cur.execute("INSERT INTO key VALUES(?,?)", values2)
             con.commit()
             con.close()
+            #---Log start---
+            message = "USER INSERTED SUCCESSFULLY in function sql3_funcs.insertUser()"
+            program = "home app"
+            logfuncs.insertlog("NA", "NA", program, message, None, None)
+            #---Log end---
             return True
     except sqlite3.Error as e:
-        print('ERROR OCCURED:in function insertUser():->',e)
+        #---Log start---
+        message = "ERROR OCCURED in function sql3_funcs.insertUser()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, e, None)
+        #---Log end---
         return False
     except Exception as e:
-        print('EXCEPTION OCCURED:in function insertUser():->',e)
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.insertUser()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
         return False
 
 def deleteUser(uname: str):
@@ -203,7 +316,12 @@ def deleteUser(uname: str):
             else:
                 pass
         if flag == 0:
-            #if User not Found
+            #---Log start---
+            message = "USER NOT FOUND in function sql3_funcs.deleteUser()"
+            program = "home app"
+            error = f"User Not Found {uname}"
+            logfuncs.insertlog("NA", "NA", program, message, error, None)
+            #---Log end---
             return False
         else:
             #if User Found
@@ -214,12 +332,25 @@ def deleteUser(uname: str):
             cur.execute(query3,(value,))
             con.commit()
             con.close()
+            #---Log start---
+            message = "USER DELETED SUCCESSFULLY in function sql3_funcs.deleteUser()"
+            program = "home app"
+            logfuncs.insertlog("NA", "NA", program, message, None, None)
+            #---Log end---
             return True
     except sqlite3.Error as e:
-        print("ERROR OCCURED: in function inserUser():->", e)
+        #---Log start---
+        message = "ERROR OCCURED in function sql3_funcs.deleteUser()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, e, None)
+        #---Log end---
         return False
     except Exception as e:
-        print("ERROR OCCURED: in function inserUser():->", e)
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.deleteUser()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
         return False
 
 def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function implementation
@@ -248,11 +379,26 @@ def userDetailsOps(uname:str, option:int=0)->str|list:#Finish this function impl
                 else:
                     pass
             if flag == 1:
+                #---Log start---
+                message = "USER DETAILS RETRIEVED SUCCESSFULLY in function sql3_funcs.userDetailsOps()"
+                program = "home app"
+                logfuncs.insertlog("NA", "NA", program, message, None, None)
+                #---Log end---
                 return returnUserDetails
             else:
+                #---Log start---
+                message = "USER NOT FOUND in function sql3_funcs.userDetailsOps()"
+                program = "home app"
+                error = f"User Not Found {uname}"
+                logfuncs.insertlog("NA", "NA", program, message, error, None)
+                #---Log end---
                 return False
     except Exception as e:
-        print('EXCEPTION OCCURED: in function userDetailsOps():->', e)
+        #---Log start---
+        message = "EXCEPTION OCCURED in function sql3_funcs.userDetailsOps()"
+        program = "home app"
+        logfuncs.insertlog("NA", "NA", program, message, None, e)
+        #---Log end---
         return False
 
 print("SQL3_FUNCS Loaded...")
